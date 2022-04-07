@@ -23,6 +23,8 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.reply("Boop!");
   } else if (commandName === "wack") {
     await interaction.reply("fuck");
+  } else if (commandName === "user") {
+    await interaction.reply("user is kinda gay");
   }
 });
 
