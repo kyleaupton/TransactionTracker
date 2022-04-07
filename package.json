@@ -1,0 +1,26 @@
+{
+  "name": "transactiontracker",
+  "version": "1.0.0",
+  "description": "A discord bot to track Ethereum transactions",
+  "main": "index.js",
+  "scripts": {
+    "serve": "echo doesnt do anything yet",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kyleaupton/TransactionTracker.git"
+  },
+  "author": "Cole Everett",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kyleaupton/TransactionTracker/issues"
+  },
+  "homepage": "https://github.com/kyleaupton/TransactionTracker#readme",
+  "dependencies": {
+    "@discordjs/rest": "^0.3.0",
+    "discord-api-types": "^0.31.0",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0"
+  }
+}
