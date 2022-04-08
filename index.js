@@ -29,9 +29,7 @@ client.on("interactionCreate", async (interaction) => {
       await db.write();
       await interaction.reply("Wallet added!");
     } else {
-      await interaction.reply(
-        "There was an error while adding the wallet."
-      );
+      await interaction.reply("There was an error while adding the wallet.");
     }
   } else if (commandName === "remove") {
     const { value } = interaction.options.get("wallet");
@@ -44,15 +42,13 @@ client.on("interactionCreate", async (interaction) => {
         await interaction.reply("Wallet removed");
       } else {
         await interaction.reply(
-          "Wallet was not found. Please try again with a different string.")
+          "Wallet was not found. Please try again with a different string."
+        );
       }
-     
     } else {
-      await interaction.reply(
-        "There was an error while removing the wallet"
-      );
+      await interaction.reply("There was an error while removing the wallet");
+    }
   }
-}
 });
 
 // Login to Discord with your client's token
