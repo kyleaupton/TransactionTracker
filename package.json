@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "description": "A discord bot to track Ethereum transactions",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "serve": "node index.js",
+    "dev": "nodemon index.js",
     "deployCommands": "node scripts/deployCommands.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,6 +24,10 @@
     "@discordjs/rest": "^0.3.0",
     "discord-api-types": "^0.31.0",
     "discord.js": "^13.6.0",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "lowdb": "^3.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }

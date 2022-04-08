@@ -1,28 +1,47 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
-const { REST } = require("@discordjs/rest");
-const { Routes } = require("discord-api-types/v9");
+import { SlashCommandBuilder } from "@discordjs/builders";
+import { REST } from "@discordjs/rest";
+import { Routes } from "discord-api-types/v9";
 
-require("dotenv").config();
+import "dotenv/config";
 const { TOKEN, CLIENTID, GUILDID } = process.env;
 
 const commands = [
-  new SlashCommandBuilder()
-    .setName("ping")
-    .setDescription("Replies with pong!"),
-  new SlashCommandBuilder()
-    .setName("server")
-    .setDescription("Replies with server info!"),
-  new SlashCommandBuilder()
-    .setName("user")
-    .setDescription("Replies with user info!"),
-  new SlashCommandBuilder()
-    .setName("wack")
-    .setDescription("Fuck around and find out"),
-].map((command) => command.toJSON());
+  {
+    name: "list",
+    description: "List the currently tracked wallets.",
+  },
+  {
+    name: "add",
+    description: "Add wallet to be tracked.",
+    option: {
+      name: "wallet",
+      description: "wallet to be tracked",
+      functionName: "addStringOption",
+    },
+  },
+];
+
+const processedCommands = commands.map((command) => {
+  const item = new SlashCommandBuilder()
+    .setName(command.name)
+    .setDescription(command.description);
+
+  if (Object.keys(command).find((key) => key === "option")) {
+    item[command.option.functionName]((option) =>
+      option
+        .setName(command.option.name)
+        .setDescription(command.option.description)
+    );
+  }
+
+  return item.toJSON();
+});
 
 const rest = new REST({ version: "9" }).setToken(TOKEN);
 
 rest
-  .put(Routes.applicationGuildCommands(CLIENTID, GUILDID), { body: commands })
+  .put(Routes.applicationGuildCommands(CLIENTID, GUILDID), {
+    body: processedCommands,
+  })
   .then(() => console.log("Successfully registered application commands."))
   .catch(console.error);

@@ -1,6 +1,7 @@
 // Require the necessary discord.js classes
-const { Client, Intents } = require("discord.js");
-require("dotenv").config();
+import { Client, Intents } from "discord.js";
+import "dotenv/config";
+import { db } from "./db.js";
 
 const { TOKEN } = process.env;
 
@@ -17,14 +18,21 @@ client.on("interactionCreate", async (interaction) => {
 
   const { commandName } = interaction;
 
-  if (commandName === "ping") {
-    await interaction.reply("Pong!");
-  } else if (commandName === "beep") {
-    await interaction.reply("Boop!");
-  } else if (commandName === "wack") {
-    await interaction.reply("fuck");
-  } else if (commandName === "user") {
-    await interaction.reply(`Hello there, ${interaction.user.username}`);
+  if (commandName === "list") {
+    const wallets = await db.data.wallets;
+    await interaction.reply(JSON.stringify(wallets));
+  } else if (commandName === "add") {
+    const wallet = interaction.options.get("wallet");
+
+    if (wallet) {
+      db.data.wallets.push(wallet.value);
+      await db.write();
+      await interaction.reply("Wallet added!");
+    } else {
+      await interaction.reply(
+        "There was an error while adding that wallet, sorry about that."
+      );
+    }
   }
 });
 
