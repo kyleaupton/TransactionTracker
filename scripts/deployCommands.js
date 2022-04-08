@@ -18,6 +18,8 @@ const commands = [
       description: "wallet to be tracked",
       functionName: "addStringOption",
     },
+  },
+  {
     name: "remove",
     description: "Remove wallet from list of wallets being tracked",
     option: {
