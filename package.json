@@ -4,7 +4,7 @@
   "description": "A discord bot to track Ethereum transactions",
   "main": "index.js",
   "scripts": {
-    "serve": "echo doesnt do anything yet",
+    "serve": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

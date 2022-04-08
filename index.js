@@ -24,7 +24,7 @@ client.on("interactionCreate", async (interaction) => {
   } else if (commandName === "wack") {
     await interaction.reply("fuck");
   } else if (commandName === "user") {
-    await interaction.reply("Yeah, I am to stupid to figure this out.");
+    await interaction.reply(`Hello there, ${interaction.user.username}`);
   }
 });
 
