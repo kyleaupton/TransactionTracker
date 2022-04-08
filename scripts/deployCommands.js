@@ -17,7 +17,7 @@ const commands = [
     .setDescription("Replies with user info!"),
   new SlashCommandBuilder()
     .setName("wack")
-    .setDescription("Fuck around a find out"),
+    .setDescription("Fuck around and find out"),
 ].map((command) => command.toJSON());
 
 const rest = new REST({ version: "9" }).setToken(TOKEN);
