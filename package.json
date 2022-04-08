@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "serve": "node index.js",
+    "deployCommands": "node scripts/deployCommands.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
