@@ -46,7 +46,7 @@ client.on("interactionCreate", async (interaction) => {
         );
       }
     } else {
-      await interaction.reply("There was an error while removing the wallet");
+      await interaction.reply("There was an error while removing the wallet.");
     }
   }
 });
