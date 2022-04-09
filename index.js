@@ -1,5 +1,5 @@
 // Require the necessary discord.js classes
-import { Client, Intents } from "discord.js";
+import { Client, Intents, MessageEmbed } from "discord.js";
 import "dotenv/config";
 import { db } from "./db.js";
 
@@ -20,7 +20,17 @@ client.on("interactionCreate", async (interaction) => {
 
   if (commandName === "list") {
     const wallets = await db.data.wallets;
-    await interaction.reply(JSON.stringify(wallets));
+
+    if (wallets.length) {
+      let s = "";
+      wallets.forEach((wallet, index) => {
+        s += `${index + 1}. ${wallet}${index < wallets.length - 1 ? "\n" : ""}`;
+      });
+      const embed = new MessageEmbed().setTitle("Wallets").setDescription(s);
+      await interaction.reply({ embeds: [embed] });
+    } else {
+      await interaction.reply("No wallets added.");
+    }
   } else if (commandName === "add") {
     const wallet = interaction.options.get("wallet");
 
