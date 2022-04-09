@@ -13,20 +13,29 @@ const commands = [
   {
     name: "add",
     description: "Add wallet to be tracked.",
-    option: {
-      name: "wallet",
-      description: "wallet to be tracked",
-      functionName: "addStringOption",
-    },
+    options: [
+      {
+        name: "nickname",
+        description: "friendly name to represent the wallet",
+        functionName: "addStringOption",
+      },
+      {
+        name: "wallet",
+        description: "wallet to be tracked",
+        functionName: "addStringOption",
+      },
+    ],
   },
   {
     name: "remove",
     description: "Remove wallet from list of wallets being tracked",
-    option: {
-      name: "wallet",
-      description: "wallet to be removed",
-      functionName: "addStringOption",
-    },
+    options: [
+      {
+        name: "wallet",
+        description: "wallet to be removed",
+        functionName: "addStringOption",
+      },
+    ],
   },
 ];
 
@@ -35,12 +44,15 @@ const processedCommands = commands.map((command) => {
     .setName(command.name)
     .setDescription(command.description);
 
-  if (Object.keys(command).find((key) => key === "option")) {
-    item[command.option.functionName]((option) =>
-      option
-        .setName(command.option.name)
-        .setDescription(command.option.description)
-    );
+  if (
+    Object.keys(command).find((key) => key === "options") &&
+    Array.isArray(command.options)
+  ) {
+    command.options.forEach((option) => {
+      item[option.functionName]((o) =>
+        o.setName(option.name).setDescription(option.description)
+      );
+    });
   }
 
   return item.toJSON();
