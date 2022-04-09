@@ -43,15 +43,34 @@ client.on("interactionCreate", async (interaction) => {
       });
     }
   } else if (commandName === "add") {
+    const currentWallets = await db.data.wallets;
     const wallet = interaction.options.get("wallet");
     const nickname = interaction.options.get("nickname");
 
     if (wallet && nickname) {
-      db.data.wallets.push({ wallet: wallet.value, nickname: nickname.value });
-      await db.write();
-      await interaction.reply({
-        embeds: [buildResponse({ message: "Wallet added!" })],
-      });
+      if (
+        !!currentWallets.find((x) => x.wallet === wallet.value) ||
+        !!currentWallets.find((x) => x.nickname === nickname.value)
+      ) {
+        await interaction.reply({
+          embeds: [
+            buildResponse({
+              message:
+                "That wallet address or nickname already exists, please try again.",
+              type: "error",
+            }),
+          ],
+        });
+      } else {
+        db.data.wallets.push({
+          wallet: wallet.value,
+          nickname: nickname.value,
+        });
+        await db.write();
+        await interaction.reply({
+          embeds: [buildResponse({ message: "Wallet added!" })],
+        });
+      }
     } else {
       await interaction.reply({
         embeds: [
