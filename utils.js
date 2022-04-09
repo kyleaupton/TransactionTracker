@@ -1,5 +1,14 @@
 import { MessageEmbed } from "discord.js";
 
-export const buildErrorResponse = ({ message = "", type = "error" } = {}) => {
-  return new MessageEmbed().setColor("#ff0000").setTitle(message);
+export const buildResponse = ({ message = "", type = "normal" } = {}) => {
+  let color = "";
+  if (type === "error") {
+    color = "#ff0000";
+  } else if (type === "warning") {
+    color = "#eb7134";
+  } else {
+    color = "#0099ff";
+  }
+
+  return new MessageEmbed().setColor(color).setTitle(message);
 };

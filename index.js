@@ -1,7 +1,7 @@
 // Require the necessary discord.js classes
 import { Client, Intents, MessageEmbed } from "discord.js";
 import "dotenv/config";
-import { buildErrorResponse } from "./utils.js";
+import { buildResponse } from "./utils.js";
 import { db } from "./db.js";
 import { MessageActionRow, MessageSelectMenu } from "discord.js";
 
@@ -34,7 +34,13 @@ client.on("interactionCreate", async (interaction) => {
         );
       await interaction.reply({ embeds: [embed] });
     } else {
-      await interaction.reply("No wallets added.");
+      await interaction.reply({
+        embeds: [
+          buildResponse({
+            message: "No wallets currently being tracked.",
+          }),
+        ],
+      });
     }
   } else if (commandName === "add") {
     const wallet = interaction.options.get("wallet");
@@ -43,62 +49,89 @@ client.on("interactionCreate", async (interaction) => {
     if (wallet && nickname) {
       db.data.wallets.push({ wallet: wallet.value, nickname: nickname.value });
       await db.write();
-      await interaction.reply("Wallet added!");
+      await interaction.reply({
+        embeds: [buildResponse({ message: "Wallet added!" })],
+      });
     } else {
       await interaction.reply({
         embeds: [
-          buildErrorResponse({
+          buildResponse({
+            type: "error",
             message: "Please supply all the required options.",
           }),
         ],
       });
     }
   } else if (commandName === "remove") {
-    const { value } = interaction.options.get("wallet");
+    const wallets = await db.data.wallets;
 
-    if (value) {
-      const index = db.data.wallets.findIndex((item) => item === value);
-      if (index > -1) {
-        db.data.wallets.splice(index, 1);
-        await db.write();
-        await interaction.reply("Wallet removed");
-      } else {
-        await interaction.reply(
-          "Wallet was not found. Please try again with a different string."
-        );
-      }
-    } else {
-      await interaction.reply("There was an error while removing the wallet.");
-    }
+    const row = new MessageActionRow().addComponents(
+      new MessageSelectMenu()
+        .setCustomId("targetWallet")
+        .setPlaceholder("Choose a wallet to delete:")
+        .addOptions(
+          wallets.map((item) => {
+            return {
+              label: item.nickname,
+              description: item.wallet,
+              value: item.wallet,
+            };
+          })
+        )
+    );
+
+    await interaction.reply({
+      components: [row],
+    });
   }
-});
-
-const newArray = db.data.wallets.map((element) => {
-  return {
-    label: "Select me",
-    description: "A wallet",
-    value: "first_option",
-  };
 });
 
 client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isCommand()) return;
+  if (!interaction.isSelectMenu()) return;
 
-  if (interaction.commandName === "remove") {
-    const row = new MessageActionRow().addComponents(
-      new MessageSelectMenu()
-        .setCustomId("select")
-        .setPlaceholder("Nothing selected")
-        .addOptions([newArray])
-    );
+  if (interaction.customId === "targetWallet") {
+    const targetString = interaction.values[0];
 
-    await interaction.reply({ content: "Pong!", components: [row] });
+    if (targetString) {
+      const wallets = await db.data.wallets;
+      const targetIndex = wallets.findIndex((x) => x.wallet === targetString);
+
+      if (targetIndex > -1) {
+        const removedWallet = wallets[targetIndex];
+        db.data.wallets.splice(targetIndex, 1);
+        await db.write();
+
+        await interaction.update({
+          embeds: [
+            buildResponse({
+              message: `${removedWallet.nickname} was successfully removed!`,
+            }),
+          ],
+          components: [],
+        });
+      } else {
+        await interaction.update({
+          embeds: [
+            buildResponse({
+              message: "Could not find selected wallet.",
+              type: "error",
+            }),
+          ],
+          components: [],
+        });
+      }
+    } else {
+      await interaction.update({
+        embeds: [
+          buildResponse({
+            message: "An unknown error has occured.",
+            type: "error",
+          }),
+        ],
+        components: [],
+      });
+    }
   }
-
-  client.on("interactionCreate", (interaction) => {
-    if (!interaction.isSelectMenu()) return;
-    console.log(interaction);
-  });
 });
 
 // Login to Discord with your client's token
