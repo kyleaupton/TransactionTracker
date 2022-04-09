@@ -3,6 +3,7 @@ import { Client, Intents, MessageEmbed } from "discord.js";
 import "dotenv/config";
 import { buildErrorResponse } from "./utils.js";
 import { db } from "./db.js";
+import { MessageActionRow, MessageSelectMenu } from "discord.js";
 
 const { TOKEN } = process.env;
 
@@ -72,29 +73,33 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-client.on("interactionCreate", async (interaction) => {
-  if (!interaction.isSelectMenu()) return;
+const newArray = db.data.wallets.map((element) => {
+  return {
+    label: "Select me",
+    description: "A wallet",
+    value: "first_option",
+  };
+});
 
-  console.log(interaction);
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isCommand()) return;
+
+  if (interaction.commandName === "remove") {
+    const row = new MessageActionRow().addComponents(
+      new MessageSelectMenu()
+        .setCustomId("select")
+        .setPlaceholder("Nothing selected")
+        .addOptions([newArray])
+    );
+
+    await interaction.reply({ content: "Pong!", components: [row] });
+  }
+
+  client.on("interactionCreate", (interaction) => {
+    if (!interaction.isSelectMenu()) return;
+    console.log(interaction);
+  });
 });
 
 // Login to Discord with your client's token
 client.login(TOKEN);
-
-/**
- * 
- * [
- *   {
- *      wallet: '',
- *      nickname: 'Kyle's wallet',
- *   }
- * ]
- * 
- * const newArray = oldArray.map((element) => {
- *    return {
-							label: 'Select me',
-							description: 'A wallet',
-							value: 'first_option',
-						}
- * });
- */
