@@ -9,7 +9,7 @@ const db = new Low(adapter);
 
 await db.read();
 
-db.data = db.data || { wallets: [] };
+db.data = db.data || { targetChannel: "", wallets: [] };
 
 await db.write();
 

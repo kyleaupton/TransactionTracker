@@ -1,17 +1,24 @@
 // Require the necessary discord.js classes
-import { Client, Intents, MessageEmbed } from "discord.js";
+import {
+  Client,
+  Intents,
+  MessageEmbed,
+  MessageActionRow,
+  MessageSelectMenu,
+} from "discord.js";
 import "dotenv/config";
-import { buildResponse } from "./utils.js";
-import { db } from "./db.js";
-import { MessageActionRow, MessageSelectMenu } from "discord.js";
+import { startChecker } from "./utils/checker.js";
+import { buildResponse, getTxCount } from "./utils/utils.js";
+import { db } from "./utils/db.js";
 
 const { TOKEN } = process.env;
 
 // Create a new client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
-// When the client is ready, run this code (only once)
 client.once("ready", () => {
+  // Start checker
+  startChecker(client);
   console.log("Ready!");
 });
 
@@ -62,9 +69,12 @@ client.on("interactionCreate", async (interaction) => {
           ],
         });
       } else {
+        const txCount = await getTxCount({ wallet: wallet.value });
+
         db.data.wallets.push({
           wallet: wallet.value,
           nickname: nickname.value,
+          txCount,
         });
         await db.write();
         await interaction.reply({
@@ -102,6 +112,25 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.reply({
       components: [row],
     });
+  } else if (commandName === "set-channel") {
+    const channel = interaction.options.getChannel("text-channel");
+
+    if (channel) {
+      const id = channel.id;
+      db.data.targetChannel = id;
+      await db.write();
+      await interaction.reply({
+        embeds: [
+          buildResponse({
+            message: `Successfully set the target channel to ${channel.name}.`,
+          }),
+        ],
+      });
+    } else {
+      await interaction.reply({
+        embeds: [buildResponse({ genaricError: true, type: "error" })],
+      });
+    }
   }
 });
 
@@ -141,12 +170,7 @@ client.on("interactionCreate", async (interaction) => {
       }
     } else {
       await interaction.update({
-        embeds: [
-          buildResponse({
-            message: "An unknown error has occured.",
-            type: "error",
-          }),
-        ],
+        embeds: [buildResponse({ genaricError: true, type: "error" })],
         components: [],
       });
     }
