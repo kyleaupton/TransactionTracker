@@ -30,25 +30,23 @@ export const buildResponse = ({
 };
 
 export const buildTransactionResonse = (tx, wallet) => {
-  return (
-    new MessageEmbed()
-      .setColor("#0099ff")
-      .setTitle(`${wallet.nickname}: New transaction`)
-      // .setTimestamp('${tx.}')
-      .setURL(`https://etherscan.io/tx/${tx.hash}`)
-      .addFields(
-        { name: "Hash", value: tx.hash },
-        {
-          name: "To",
-          value: tx.to === wallet.wallet ? wallet.nickname : tx.to,
-        },
-        {
-          name: "From",
-          value: tx.from === wallet.wallet ? wallet.nickname : tx.from,
-        },
-        { name: "Value", value: `${Number(tx.value) / Math.pow(10, 18)} ETH` }
-      )
-  );
+  return new MessageEmbed()
+    .setColor("#0099ff")
+    .setTitle(`${wallet.nickname}: New Transaction`)
+    .setURL(`https://etherscan.io/tx/${tx.hash}`)
+    .addFields(
+      { name: "Transaction Hash", value: tx.hash },
+      { name: "Timestamp", value: `<t:${tx.timeStamp}:F>` },
+      {
+        name: "From",
+        value: tx.from === wallet.wallet ? wallet.nickname : tx.from,
+      },
+      {
+        name: "To",
+        value: tx.to === wallet.wallet ? wallet.nickname : tx.to,
+      },
+      { name: "Value", value: `${Number(tx.value) / Math.pow(10, 18)} ETH` }
+    );
 };
 
 export const sendMessage = async (client, param) => {
