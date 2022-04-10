@@ -16,6 +16,8 @@ A file named `.env` needs to be at the root of the repository with the following
 TOKEN=tokenhere
 CLIENTID=tokenhere
 GUILDID=tokenhere
+ETHERSCAN_API_TOKEN=tokenhere
+INFURA_URL=tokenhere
 ```
 
 ## Starting
