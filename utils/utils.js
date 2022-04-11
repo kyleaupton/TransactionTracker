@@ -34,9 +34,15 @@ export const buildTransactionResonse = (tx, wallet) => {
     .setColor("#0099ff")
     .setTitle(`${wallet.nickname}: New Transaction`)
     .setURL(`https://etherscan.io/tx/${tx.hash}`)
+    .setThumbnail(
+      "https://cdn-images-1.medium.com/max/1200/1*YbebeYsXS_N0LRcTkHT_IA.png"
+    )
     .addFields(
+      {
+        name: "Timestamp",
+        value: `<t:${tx.timeStamp}:F> // <t:${tx.timeStamp}:R>`,
+      },
       { name: "Transaction Hash", value: tx.hash },
-      { name: "Timestamp", value: `<t:${tx.timeStamp}:F>` },
       {
         name: "From",
         value: tx.from === wallet.wallet ? wallet.nickname : tx.from,
@@ -45,8 +51,17 @@ export const buildTransactionResonse = (tx, wallet) => {
         name: "To",
         value: tx.to === wallet.wallet ? wallet.nickname : tx.to,
       },
-      { name: "Value", value: `${Number(tx.value) / Math.pow(10, 18)} ETH` }
-    );
+      { name: "Value", value: `${Number(tx.value) / Math.pow(10, 18)} ETH` },
+      {
+        name: "Gas",
+        value: `${(Number(tx.gasPrice) / Math.pow(10, 9)).toFixed(2)} GWEI`,
+      }
+    )
+    .setFooter({
+      text: "Bao Finance",
+      iconURL:
+        "https://cdn-images-1.medium.com/max/1200/1*YbebeYsXS_N0LRcTkHT_IA.png",
+    });
 };
 
 export const sendMessage = async (client, param) => {
